@@ -10,7 +10,7 @@ const long double Eps = .000001;
 int main()
 {
     Diploma* n = new Diploma;
-	n->Method(Eps, 1.0, 5);
-
+	n->mkMethod(Eps, .001, 10);
+    n->EuMethod(Eps, .001, 10);
 	return 0;
 }

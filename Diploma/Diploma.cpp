@@ -480,7 +480,7 @@ long double* Diploma::LpTransformation(){
 
 }
 
-void Diploma::Method(long double Eps, long double h, long double B){
+void Diploma::mkMethod(long double Eps, long double h, long double B){
     numP = B/h + 1;
     H = h;
     B_ = B;
@@ -495,7 +495,7 @@ void Diploma::Method(long double Eps, long double h, long double B){
     h = h/2;
 
 
-    ofstream fout("result.txt");
+    ofstream fout("resultMK.txt");
 	long double m, a, b, c, d;
 
 	long double *yo = new long double[N];
@@ -560,7 +560,7 @@ void Diploma::Method(long double Eps, long double h, long double B){
 		k[3] = Mult(Dn, Add(k[2], Mult(d, k[1], N), N), N);
 
 
-		for (int i = 0; i < N; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			yo = Add(yo, Mult(p[i], k[i], N), N);
 		}
@@ -573,15 +573,67 @@ void Diploma::Method(long double Eps, long double h, long double B){
                 for (int i = 0; i < N; i++)
                 y[l][i] = yo[i];
                 l++;
+                show(fout, yo, N);
             }
 
 		cout << "t = " << time << endl;
 		time+=h;
 		counter++;
-		show(fout, yo, N);
+
 	} while (time <= B);
     cout << endl<< endl<< endl;
     show(LpTransformation(), N);
 	fout.close();
 	system("pause");
 }
+
+void Diploma::EuMethod(long double Eps, long double h, long double B)
+{
+    long double *yo = LpTransformation();
+
+    long double** A = new long double*[N];
+	for (int i = 0; i < N; i++)
+		A[i] = new long double[N];
+    A[0][0] = -k1;
+	A[0][1] = 0;
+	A[0][2] = 0;
+	A[0][3] = 0;
+
+	A[1][0] = k1;
+	A[1][1] = 0;
+	A[1][2] = 0;
+	A[1][3] = 0;
+
+	A[2][0] = k1;
+	A[2][1] = 0;
+	A[2][2] = 0;
+	A[2][3] = 0;
+
+	A[3][0] = 0;
+	A[3][1] = 0;
+	A[3][2] = 0;
+	A[3][3] = 0;
+
+	ofstream fout("resultEU.txt");
+
+	cout << "t = 0" << endl;
+    show(fout, yo, N);
+
+	long double time = h;
+
+    do
+	{
+        yo = Add(yo, Mult(A, yo, N), N);
+
+		cout << "t = " << time << endl;
+		time+=h;
+
+		show(fout, yo, N);
+	} while (time <= B);
+
+    cout << endl<< endl<< endl;
+
+	fout.close();
+	system("pause");
+}
+
