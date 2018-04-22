@@ -13,6 +13,13 @@ const int N = 4;
 const long double k1 = 0.51;
 const long double k2 = 0.07;
 
+long double **y;
+long double **y_;
+long double H;
+long double B_;
+int numP;
+
+
 void show(long double** A, int N){
 	for (int i = 0; i < N; i++)
 	{
@@ -30,6 +37,15 @@ void show(ofstream &fout, long double* a, int N){
 		cout << a[j] << " ";
 	}
 	fout << " \n";
+	cout << endl;
+
+}
+
+void show(long double* a, int N){
+	for (int j = 0; j < N; j++)
+	{
+		cout << a[j] << " ";
+	}
 	cout << endl;
 
 }
@@ -388,16 +404,101 @@ long double Diploma::norm(long double* x, long double* y, int N){
 	return sqrt(temp);
 }
 
+long double** Y(long double t, int N){
+    long double** Ym = new long double*[N];
+	for (int i = 0; i < N; i++)
+		Ym[i] = new long double[N];
 
-void Diploma::Method(long double Eps)
-{
+    Ym[0][0] = exp(-k1*t);
+    Ym[0][1] = 0;
+    Ym[0][2] = 0;
+    Ym[0][3]  = 0;
+
+    Ym[1][0] = 1 - exp(-k1*t);
+    Ym[1][1] = 1;
+    Ym[1][2] = 0;
+    Ym[1][3] = 0;
+
+    Ym[2][0] = 1 - exp(-k1*t);
+    Ym[2][1] = 0;
+    Ym[2][2] = 1;
+    Ym[2][3] = 0;
+
+    Ym[3][0] = 0;
+    Ym[3][1] = 0;
+    Ym[3][2] = 0;
+    Ym[3][3] = 1;
+
+    return Ym;
+}
+
+long double* P(long double* x, int N){
+    long double * Pv = new long double[N];
+
+    Pv[0] = -2 * k2 * x[0] * x[0];
+    Pv[1] = k2 * x[0] * x[0];
+    Pv[2] = 0;
+    Pv[3] = 2 * k2 * x[0] * x[0];
+
+    return Pv;
+}
+
+long double* Diploma::LpTransformation(){
+    long double *y0 = new long double[N];
+    for (int i = 0; i < N; i++)
+        y0[i] = y[0][i];
+    long double t = 0;
+
+    for( int i = 0; i < numP - 1; i++)
+    {
+        long double **TempYa = Y(t, N);
+        long double **TempYab = Y(t + H/2, N);
+        long double **TempYb = Y(t + H, N);
+
+        long double *TempPa = P(y[i], N);
+        long double *TempPab = P(y_[i], N);
+        long double *TempPb = P(y[i+1], N);
+
+        long double *dY = Mult(
+                               H/6,
+                               Add(
+                                   Add(
+                                       Mult(TempYa, TempPa, N),
+                                       Mult(4,
+                                            Mult(TempYab, TempPab, N),
+                                            N),
+                                       N),
+                                   Mult(TempYb, TempPb,N),
+                                   N),
+                               N);
+        y0 = Add(y0, dY, N);
+
+        t += H;
+    }
+
+    return y0;
+
+}
+
+void Diploma::Method(long double Eps, long double h, long double B){
+    numP = B/h + 1;
+    H = h;
+    B_ = B;
+    y = new long double*[numP];
+    y_ = new long double*[numP];
+    for (int i = 0; i < numP; i++)
+    {
+        y[i] = new long double[N];
+        y_[i] = new long double[N];
+    }
+
+    h = h/2;
+
+
     ofstream fout("result.txt");
-
 	long double m, a, b, c, d;
-	long double h = 0.01;
 
 	long double *yo = new long double[N];
-	long double *yn = new long double[N];
 	long double *v = new long double[N];
 	long double *p = new long double[N];
 
@@ -426,23 +527,28 @@ void Diploma::Method(long double Eps)
 	c = -0.49552206416578;
 	d = -1.28777648233922;
 
-	yo[0] = .086;
-	yo[1] = .0;
-	yo[2] = .903;
-	yo[3] = .011;
-    show(fout, yo, N);
 	p[0] = 1.27836939012447;
 	p[1] = -1.00738680980438;
 	p[2] = 0.92655391093950;
 	p[3] = -0.33396131834691;
-	int I = 0;
 
-	cout << "CAAAMON" << endl;
-	double g;
-	cin >> g;
+	yo[0] = .086;
+	yo[1] = .0;
+	yo[2] = .903;
+	yo[3] = .011;
+
+	for (int i = 0; i < N; i++)
+        y[0][i] = yo[i];
+
+	cout << "t = 0" << endl;
+    show(fout, yo, N);
+
+	long double time = h;
+	int counter = 1;
+	int l = 1;
+
 	do
 	{
-		yn = yo;
 
 		Dn = Add(E, Mult(-m*h, Jacobian(f(yo, N), N), N), N);
 		Dn = LUInversion(Dn);
@@ -454,14 +560,28 @@ void Diploma::Method(long double Eps)
 		k[3] = Mult(Dn, Add(k[2], Mult(d, k[1], N), N), N);
 
 
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < N; i++)
 		{
 			yo = Add(yo, Mult(p[i], k[i], N), N);
 		}
-		cout << "t = " << I*h << endl;
-		I++;
+
+		if(counter % 2)
+            for (int i = 0; i < N; i++)
+                y_[l-1][i] = yo[i];
+        else
+            {
+                for (int i = 0; i < N; i++)
+                y[l][i] = yo[i];
+                l++;
+            }
+
+		cout << "t = " << time << endl;
+		time+=h;
+		counter++;
 		show(fout, yo, N);
-	} while (norm(yo, yn, N) > Eps);
+	} while (time <= B);
+    cout << endl<< endl<< endl;
+    show(LpTransformation(), N);
 	fout.close();
 	system("pause");
 }

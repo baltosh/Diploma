@@ -15,7 +15,8 @@ public:
     virtual long double** LUInversion(long double**); // вычисление обратной матрицы с помощью LU разложения
     virtual long double** Jacobian(long double*, int); // расчет матрицы якоби
     virtual long double norm(long double*, long double*, int); // подсчет расстояния между векторами
-    virtual void Method(long double);
+    virtual void Method(long double, long double, long double);
+    virtual long double* LpTransformation();
 
     ~Diploma();
 protected:
