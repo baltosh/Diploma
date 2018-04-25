@@ -12,7 +12,7 @@ int main()
     Diploma* n = new Diploma;
     n->Temperature = 800;
     n->CalcCoefs();
-	n->mkMethod(Eps, .01, 10);
-    n->EuMethod(Eps, .01, 10);
+	n->mkMethod(Eps, .001, 10);
+    n->EuMethod(Eps, .001, 10);
 	return 0;
 }

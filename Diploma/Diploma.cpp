@@ -508,11 +508,6 @@ void Diploma::CalcCoefs(){
 
     k1 = A[0] * exp(-E[0]/(R*Temperature));
     k2 = A[1] * exp(-E[1]/(R*Temperature));
-
-    cout << endl << k1 << " " << k2 << endl;
-
-    double test;
-    cin >> test;
 }
 
 void Diploma::mkMethod(long double Eps, long double h, long double B){
