@@ -35,9 +35,16 @@
 		<Unit filename="Diploma.cpp" />
 		<Unit filename="Diploma.h" />
 		<Unit filename="main.cpp" />
-		<Unit filename="result.txt" />
-		<Unit filename="resultEU.txt" />
-		<Unit filename="resultMK.txt" />
+		<Unit filename="resultEU(1000).txt" />
+		<Unit filename="resultEU(1100).txt" />
+		<Unit filename="resultEU(1200).txt" />
+		<Unit filename="resultEU(800).txt" />
+		<Unit filename="resultEU(900).txt" />
+		<Unit filename="resultMK(1000).txt" />
+		<Unit filename="resultMK(1100).txt" />
+		<Unit filename="resultMK(1200).txt" />
+		<Unit filename="resultMK(800).txt" />
+		<Unit filename="resultMK(900).txt" />
 		<Extensions>
 			<code_completion />
 			<envvars />

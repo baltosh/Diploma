@@ -531,10 +531,10 @@ void Diploma::mkMethod(long double Eps, long double h, long double B){
     h = h/2;
 
     string sT = LDToStr(Temperature);
-
     string path = "resultMK(" + sT + ").txt";
     const char* cPath = path.c_str();
     ofstream fout(cPath);
+
 	long double m, a, b, c, d;
 
 	long double *yo = new long double[N];
@@ -665,7 +665,10 @@ void Diploma::EuMethod(long double Eps, long double h, long double B){
 	A[3][2] = 0;
 	A[3][3] = 0;
 
-	ofstream fout("resultEU.txt");
+	string sT = LDToStr(Temperature);
+    string path = "resultEU(" + sT + ").txt";
+    const char* cPath = path.c_str();
+    ofstream fout(cPath);
 
 	cout << "t = 0" << endl;
     show(fout, yo, N);
