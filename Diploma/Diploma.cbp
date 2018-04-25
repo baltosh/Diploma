@@ -36,6 +36,8 @@
 		<Unit filename="Diploma.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="result.txt" />
+		<Unit filename="resultEU.txt" />
+		<Unit filename="resultMK.txt" />
 		<Extensions>
 			<code_completion />
 			<envvars />

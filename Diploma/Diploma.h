@@ -3,6 +3,8 @@
 class Diploma
 {
 public:
+    long double Temperature;
+
     virtual long double* f(long double*, int); // правая часть системы дифференциальных уравнений
     virtual long double* Add(long double*, long double*, int); // сложение векторов
     virtual long double* Mult(long double, long double*, int); // умножение скаляра на вектор
@@ -18,7 +20,7 @@ public:
     virtual void mkMethod(long double, long double, long double);
     virtual void EuMethod(long double, long double, long double);
     virtual long double* LpTransformation();
-
+    virtual void CalcCoefs();
     ~Diploma();
 protected:
 

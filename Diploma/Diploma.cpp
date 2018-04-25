@@ -1,17 +1,20 @@
 #include <iomanip>
 #include <cstdio>
 #include <iostream>
+#include <string>
+#include <sstream>
 #include <Windows.h>
 #include <cmath>
 #include <fstream>
 #include "Diploma.h"
 
+
 using namespace std;
 
 const int N = 4;
 
-const long double k1 = 0.51;
-const long double k2 = 0.07;
+long double k1 = 0.51;
+long double k2 = 0.07;
 
 long double **y;
 long double **y_;
@@ -28,6 +31,13 @@ void show(long double** A, int N){
 		cout << endl;
 	}
 	cout << endl;
+}
+
+string LDToStr(long double one){
+   ostringstream ss;
+    ss << one;
+
+    return ss.str();
 }
 
 void show(ofstream &fout, long double* a, int N){
@@ -444,6 +454,11 @@ long double* P(long double* x, int N){
 }
 
 long double* Diploma::LpTransformation(){
+
+
+    //cout << numP;
+    //show(y, numP);
+    //show(y_, numP-1);
     long double *y0 = new long double[N];
     for (int i = 0; i < N; i++)
         y0[i] = y[0][i];
@@ -451,20 +466,20 @@ long double* Diploma::LpTransformation(){
 
     for( int i = 0; i < numP - 1; i++)
     {
-        long double **TempYa = Y(t, N);
-        long double **TempYab = Y(t + H/2, N);
-        long double **TempYb = Y(t + H, N);
+        long double **TempYa = Y(-t, N);
+        long double **TempYab = Y(-(t + H/2), N);
+        long double **TempYb = Y(-(t + H), N);
 
         long double *TempPa = P(y[i], N);
         long double *TempPab = P(y_[i], N);
         long double *TempPb = P(y[i+1], N);
 
         long double *dY = Mult(
-                               H/6,
+                               H/6.0,
                                Add(
                                    Add(
                                        Mult(TempYa, TempPa, N),
-                                       Mult(4,
+                                       Mult(4.0,
                                             Mult(TempYab, TempPab, N),
                                             N),
                                        N),
@@ -480,7 +495,28 @@ long double* Diploma::LpTransformation(){
 
 }
 
+void Diploma::CalcCoefs(){
+    long double *A = new long double[2];
+    A[0] = 1.08*pow(10,16);
+    A[1] = 3.16*pow(10,16);
+
+    long double *E = new long double[2];
+    E[0] = 2.5*pow(10,5);
+    E[1] = 2.7*pow(10,5);
+
+    long double R = 8.31;
+
+    k1 = A[0] * exp(-E[0]/(R*Temperature));
+    k2 = A[1] * exp(-E[1]/(R*Temperature));
+
+    cout << endl << k1 << " " << k2 << endl;
+
+    double test;
+    cin >> test;
+}
+
 void Diploma::mkMethod(long double Eps, long double h, long double B){
+
     numP = B/h + 1;
     H = h;
     B_ = B;
@@ -494,8 +530,11 @@ void Diploma::mkMethod(long double Eps, long double h, long double B){
 
     h = h/2;
 
+    string sT = LDToStr(Temperature);
 
-    ofstream fout("resultMK.txt");
+    string path = "resultMK(" + sT + ").txt";
+    const char* cPath = path.c_str();
+    ofstream fout(cPath);
 	long double m, a, b, c, d;
 
 	long double *yo = new long double[N];
@@ -532,10 +571,10 @@ void Diploma::mkMethod(long double Eps, long double h, long double B){
 	p[2] = 0.92655391093950;
 	p[3] = -0.33396131834691;
 
-	yo[0] = .086;
-	yo[1] = .0;
-	yo[2] = .903;
-	yo[3] = .011;
+	yo[0] = 1; //.086;
+	yo[1] = 0; //.0;
+	yo[2] = 0; //.903;
+	yo[3] = 0; //.011;
 
 	for (int i = 0; i < N; i++)
         y[0][i] = yo[i];
@@ -564,7 +603,15 @@ void Diploma::mkMethod(long double Eps, long double h, long double B){
 		{
 			yo = Add(yo, Mult(p[i], k[i], N), N);
 		}
+/*
+		double mMass = yo[0];
 
+        for (int i = 1; i < N; i++)
+            mMass += yo[i];
+
+        for (int i = 0; i < N; i++)
+            yo[i] /= mMass;
+*/
 		if(counter % 2)
             for (int i = 0; i < N; i++)
                 y_[l-1][i] = yo[i];
@@ -587,9 +634,13 @@ void Diploma::mkMethod(long double Eps, long double h, long double B){
 	system("pause");
 }
 
-void Diploma::EuMethod(long double Eps, long double h, long double B)
-{
+void Diploma::EuMethod(long double Eps, long double h, long double B){
     long double *yo = LpTransformation();
+/*
+    yo[0] = 0.78;
+    yo[1] = 0.16;
+    yo[2] = 0.1;
+    yo[3] = 0.12;*/
 
     long double** A = new long double*[N];
 	for (int i = 0; i < N; i++)
