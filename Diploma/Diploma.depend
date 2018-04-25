@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1524649749 source:c:\users\taltosh\documents\github\such_new_repository\diploma\diploma.cpp
+1524650694 source:c:\users\taltosh\documents\github\such_new_repository\diploma\diploma.cpp
 	<iomanip>
 	<cstdio>
 	<iostream>
@@ -10,11 +10,11 @@
 	<fstream>
 	"Diploma.h"
 
-1524648203 c:\users\taltosh\documents\github\such_new_repository\diploma\diploma.h
+1524652406 c:\users\taltosh\documents\github\such_new_repository\diploma\diploma.h
 
 1524394685 source:c:\users\taltosh\documents\github\such_new_repository\diploma\diploma.c
 	"Diploma.h"
 
-1524650499 source:c:\users\taltosh\documents\github\such_new_repository\diploma\main.cpp
+1524650711 source:c:\users\taltosh\documents\github\such_new_repository\diploma\main.cpp
 	"Diploma.h"
 

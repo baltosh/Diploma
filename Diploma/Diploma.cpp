@@ -60,16 +60,6 @@ void show(long double* a, int N){
 
 }
 
-long double* Diploma::f(long double* y, int N){
-	long double* result = new long double[N];
-	result[0] = - k1 * y[0] - 2 * k2 * y[0] * y[0];
-	result[1] = k1 * y[0] + k2 * y[0] * y[0];
-	result[2] = k1 * y[0];
-	result[3] = 2 * k2 * y[0] * y[0];
-
-	return result;
-}
-
 long double* Diploma::Add(long double* x, long double* y, int N){
 	long double* result = new long double[N];
 	for (int i = 0; i < N; i++)
@@ -414,7 +404,17 @@ long double Diploma::norm(long double* x, long double* y, int N){
 	return sqrt(temp);
 }
 
-long double** Y(long double t, int N){
+long double* Diploma::f(long double* y, int N){
+	long double* result = new long double[N];
+	result[0] = - k1 * y[0] - 2 * k2 * y[0] * y[0];
+	result[1] = k1 * y[0] + k2 * y[0] * y[0];
+	result[2] = k1 * y[0];
+	result[3] = 2 * k2 * y[0] * y[0];
+
+	return result;
+}
+
+long double** Diploma::Y(long double t, int N){
     long double** Ym = new long double*[N];
 	for (int i = 0; i < N; i++)
 		Ym[i] = new long double[N];
@@ -442,7 +442,34 @@ long double** Y(long double t, int N){
     return Ym;
 }
 
-long double* P(long double* x, int N){
+long double** Diploma::Ar(long double t, int N){
+    long double** A = new long double*[N];
+	for (int i = 0; i < N; i++)
+		A[i] = new long double[N];
+    A[0][0] = -k1;
+	A[0][1] = 0;
+	A[0][2] = 0;
+	A[0][3] = 0;
+
+	A[1][0] = k1;
+	A[1][1] = 0;
+	A[1][2] = 0;
+	A[1][3] = 0;
+
+	A[2][0] = k1;
+	A[2][1] = 0;
+	A[2][2] = 0;
+	A[2][3] = 0;
+
+	A[3][0] = 0;
+	A[3][1] = 0;
+	A[3][2] = 0;
+	A[3][3] = 0;
+
+    return A;
+}
+
+long double* Diploma::P(long double* x, int N){
     long double * Pv = new long double[N];
 
     Pv[0] = -2 * k2 * x[0] * x[0];
@@ -593,7 +620,6 @@ void Diploma::mkMethod(long double Eps, long double h, long double B){
 		k[2] = Mult(Dn, Add(Mult(h, v, N), Mult(c, k[1], N), N), N);
 		k[3] = Mult(Dn, Add(k[2], Mult(d, k[1], N), N), N);
 
-
 		for (int i = 0; i < 4; i++)
 		{
 			yo = Add(yo, Mult(p[i], k[i], N), N);
@@ -637,28 +663,7 @@ void Diploma::EuMethod(long double Eps, long double h, long double B){
     yo[2] = 0.1;
     yo[3] = 0.12;*/
 
-    long double** A = new long double*[N];
-	for (int i = 0; i < N; i++)
-		A[i] = new long double[N];
-    A[0][0] = -k1;
-	A[0][1] = 0;
-	A[0][2] = 0;
-	A[0][3] = 0;
-
-	A[1][0] = k1;
-	A[1][1] = 0;
-	A[1][2] = 0;
-	A[1][3] = 0;
-
-	A[2][0] = k1;
-	A[2][1] = 0;
-	A[2][2] = 0;
-	A[2][3] = 0;
-
-	A[3][0] = 0;
-	A[3][1] = 0;
-	A[3][2] = 0;
-	A[3][3] = 0;
+    long double** A = Ar(0, N);
 
 	string sT = LDToStr(Temperature);
     string path = "resultEU(" + sT + ").txt";
